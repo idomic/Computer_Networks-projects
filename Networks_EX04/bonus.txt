@@ -1,0 +1,1 @@
+we implemented the method response401 in HttpRequest class that send message for Unauthorized request E.G: request that contain “/../“ or the word “src” is illegal.  
