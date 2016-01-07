@@ -86,9 +86,9 @@ public class Analyzer implements Runnable {
 
 	@Override
 	public void run() {
-		String currentWebsite = m_downloadedQueue.remove();
-		parseHTML(currentWebsite); 
-
+		//String currentWebsite = m_downloadedQueue.remove();
+		//parseHTML(currentWebsite); 
+		parseHTML("<a href='http://www.w3schools.com/html/'>Visit our HTML tutorial</a>");
 
 
 		// save the result inside downloads queue for analyzer class.
@@ -104,7 +104,7 @@ public class Analyzer implements Runnable {
 		ArrayList<String> Documents = new ArrayList<String>();
 		String currTag;
 		//Insert all tags to array
-		Matcher m = Pattern.compile("((/<*a.*?>/g)|(/<*img.*?>/g))").matcher(i_toParse);
+		Matcher m = Pattern.compile("/<.*a.*>/g | /<.*img.*>/g").matcher(i_toParse);
 		while (m.find()) {
 			tags.add(m.group());
 		}

@@ -1,5 +1,8 @@
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -81,7 +84,7 @@ public void run() {
 	
 	// Save response as String
 	m_startTime = System.currentTimeMillis();
-	generateGetRequest();
+	generateGetRequest(m_Domain);
 	m_endTime = System.currentTimeMillis();
 	
 	// save the result inside downloads queue for analyzer class.
@@ -92,11 +95,22 @@ public void run() {
 	
 }
 
-private void generateGetRequest() {
-	
+private void generateGetRequest(String i_domain) {
+	try {
+		URL oracle = new URL("http://" + i_domain);
+	    BufferedReader in = new BufferedReader(
+	    new InputStreamReader(oracle.openStream()));
+
+	    String inputLine;
+	    while ((inputLine = in.readLine()) != null)
+	        System.out.println(inputLine);
+	    in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 }
 
-private void generateHeadRequest() {
+private void generateHeadRequest(String i_domain) {
 	
 }
 

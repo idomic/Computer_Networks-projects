@@ -30,12 +30,14 @@ public class WebServer {
         
 		 //parse configure file
 		parseConfig();
-	//	Analyzer anz = new Analyzer(1);
+//		Analyzer anz = new Analyzer(1);
+//		anz.run();
 //		anz.m_downloadedQueue.add("<a href='http://www.w3schools.com/html/'>Visit our HTML tutorial</a>");
         
         try {
         	// TODO Check with ori when it closes the socket?
-            welcomeSocket = new ServerSocket(port);
+
+        	welcomeSocket = new ServerSocket(port);
             System.out.println("Server is up");
             
             

@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class HttpRequest {
@@ -384,15 +386,18 @@ public class HttpRequest {
 		fileContent = readFile(newFilePath);
 		try {
 			if (fileContent !=null) {
-				//Downloader downloader = new Downloader(0, postParameters);
-				//downloader.run();
+
 				response = response200OK(newFilePath);
 				os.writeBytes(response);
 				writeFile(fileContent);
 			}
+			
 		} catch (Exception e) {
 			System.out.println("Warning - Unable to write to ouput stream in postMethod - Stream closed..");
 		}	
+		
+		Downloader downloader = new Downloader(0, parseRequestParameters(postParameters));
+		downloader.run();
 	}
 
 	
@@ -412,6 +417,45 @@ public class HttpRequest {
 			System.err.println("Warning - Unable to write to OutputStream on getMethod- Stream Closed..");
     		closeOs();
 		}
+	}
+	
+	private Map<String, String> parseRequestParameters(String i_stringToParse) {
+			String text    =	i_stringToParse;
+			Map<String, String> result = new HashMap<String, String>();
+	        String domainRequest = "domain=(.*)&";
+	        String portScanRequest = "portScan=(.*)&";
+	        String robotsRequest = "robotsTxt=(.*)";
+	        String match = "";
+
+	        Pattern domainPattern = Pattern.compile(domainRequest);
+
+	        Matcher matcher = domainPattern.matcher(i_stringToParse);
+	        while (matcher.find()) {
+	        	match = matcher.group(1);
+			}
+	        result.put("domain", match);
+	        if(i_stringToParse.contains("portScan")) {
+	        	Pattern portPattern = Pattern.compile(portScanRequest);
+	        	matcher = portPattern.matcher(i_stringToParse);
+	        	while (matcher.find()) {
+		        	match = matcher.group(1);
+				}
+		        result.put("portScan", match);
+	        } else {
+	        	result.put("portScan", "false");
+	        }
+	        if(i_stringToParse.contains("robotsTxt")) {
+	        	Pattern robotsPattern = Pattern.compile(robotsRequest);
+	        	matcher = robotsPattern.matcher(i_stringToParse);
+	        	while (matcher.find()) {
+		        	match = matcher.group(1);
+				}
+		        result.put("robotsTxt", match);
+	        } else {
+	        	result.put("robotsTxt", "false");
+	        }
+	        //boolean matches = matcher.matches();
+		return result;
 	}
 		
 	
