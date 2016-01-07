@@ -1,5 +1,8 @@
 import java.io.* ;
 import java.net.* ;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
 
 class Client implements Runnable{
     final static String CRLF = "\r\n";
@@ -70,6 +73,7 @@ class Client implements Runnable{
     				if (requestHasBody) {
     					char[] body = new char[contentLength];
     					buff.read(body, 0, contentLength);
+    					
     					postParameters = String.valueOf(body);
     					requestHasBody = false;
     				}
@@ -111,7 +115,12 @@ class Client implements Runnable{
     	}
     } 
 
-
+    private Map<String, String> parsePostParameters(String i_postParameters) {
+    	Map<String, String> result = new HashMap<String, String>();
+		
+		return result;
+    	
+    }
 
 	private void checkLengthOfBody() {
 		try {

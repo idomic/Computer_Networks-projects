@@ -384,6 +384,8 @@ public class HttpRequest {
 		fileContent = readFile(newFilePath);
 		try {
 			if (fileContent !=null) {
+				//Downloader downloader = new Downloader(0, postParameters);
+				//downloader.run();
 				response = response200OK(newFilePath);
 				os.writeBytes(response);
 				writeFile(fileContent);
@@ -634,6 +636,12 @@ public class HttpRequest {
 		}
 		if(filename.endsWith(".gif")) {
 			return "image/gif";
+		}
+		if(filename.endsWith(".bmp")) {
+			return "image/bmp";
+		}
+		if(filename.endsWith(".png")) {
+			return "image/png";
 		}
 		if(filename.endsWith(".ico")) {
 			return "ico";

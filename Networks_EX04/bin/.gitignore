@@ -1,12 +1,4 @@
-/Server.class
-/.DS_Store
-/home.html
-/MyThreadPool.class
-/ThreadPool.class
-/MyThreadPull.class
-/MyThreadPool$WorkerThread.class
-/HttpUtilities.class
-/Client.class
-/HttpRequest.class
-/Parser.class
-/favicon.ico
+/Downloaders.class
+/Downloader.class
+/RobotsTxt.class
+/Analyzer.class
