@@ -2,7 +2,11 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -41,6 +45,9 @@ public class Downloader implements Runnable {
    * instances are waiting for new URLs and therefore there is no more work
    * and crawling can be stopped.
    */
+  String CRLF = "\r\n";;
+  String httpVersion = "HTTP/1.1";
+  String userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36";
   private boolean isWaitingForNewURLs;
   private String m_Domain;
   private boolean m_RobotsTxt;
@@ -80,11 +87,19 @@ public class Downloader implements Runnable {
 @Override
 public void run() {
 	//	Deal with robots/port scan.
+	if (m_portScan) {
+		//ArrayList<Integer> ports = portscan();
+		//ports.toString();
+	}
 	// Get method to domain.
 	
 	// Save response as String
 	m_startTime = System.currentTimeMillis();
-	generateGetRequest(m_Domain);
+	String head = generateHeadRequest(m_Domain);
+	generateRequest(head);
+	System.out.println("************* Print Content Web Page ******************");
+	String content = generateGETRequest(m_Domain);
+	generateRequest(content);
 	m_endTime = System.currentTimeMillis();
 	
 	// save the result inside downloads queue for analyzer class.
@@ -92,27 +107,88 @@ public void run() {
 	m_downloadedQueue.add(parsedSite);
 	m_downloadedQueue.notifyAll();
 	// shutdown.
-	
+
 }
 
-private void generateGetRequest(String i_domain) {
-	try {
-		URL oracle = new URL("http://" + i_domain);
-	    BufferedReader in = new BufferedReader(
-	    new InputStreamReader(oracle.openStream()));
-
-	    String inputLine;
-	    while ((inputLine = in.readLine()) != null)
-	        System.out.println(inputLine);
-	    in.close();
-		} catch (IOException e) {
+private ArrayList<Integer> portscan() {
+	ArrayList<Integer> result = new ArrayList<Integer>();
+	for (int i = 0; i < 1024; i++) {
+		try {
+			Socket checker = new Socket("127.0.0.1",i);
+			result.add(i);
+			checker.close();
+			System.out.println("************port is open *************" + i);
+		} catch (UnknownHostException e) {
 			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("port is close" + i);
 		}
+	}
+	
+	return result;
 }
 
-private void generateHeadRequest(String i_domain) {
+//
+//private void generateGetRequest(String i_domain) {
+//	try {
+//		URL oracle = new URL("http://" + i_domain);
+//	    BufferedReader in = new BufferedReader(
+//	    new InputStreamReader(oracle.openStream()));
+//
+//	    String inputLine;
+//	    while ((inputLine = in.readLine()) != null)
+//	        System.out.println(inputLine);
+//	    in.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//}
+
+private String generateHeadRequest(String i_domain) {
+		StringBuilder getMessage = new StringBuilder();
+		getMessage.append("HEAD " +"/ " + httpVersion + CRLF);
+		getMessage.append("Host: " + i_domain + CRLF);
+		getMessage.append("Connection: keep-alive" + CRLF);
+		getMessage.append("User-Agent: "+ userAgent +CRLF);
+		getMessage.append(CRLF);
+		return getMessage.toString();
+
+}
+
+private String generateGETRequest(String i_domain) {
+	StringBuilder getMessage = new StringBuilder();
+	getMessage.append("GET " +"/ " + httpVersion + CRLF);
+	getMessage.append("Host: " + i_domain + CRLF);
+	getMessage.append("Connection: keep-alive" + CRLF);
+	getMessage.append("User-Agent: "+ userAgent +CRLF);
+	getMessage.append(CRLF);
+	return getMessage.toString();
 	
 }
+
+private void generateRequest(String message) {
+	try {
+		Socket s = new Socket(InetAddress.getByName(m_Domain), 80);
+		PrintWriter pw = new PrintWriter(s.getOutputStream());
+		pw.println(message);
+		//pw.println("");
+		pw.flush();
+		BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+		String response;
+		while ((response = br.readLine()) != null) {
+			System.out.println(response);
+		}
+		br.close();
+		s.close();
+	} catch (UnknownHostException e) {
+		System.out.println("Crawler failed to start because: [error description]");
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+}
+	
 
 
 //

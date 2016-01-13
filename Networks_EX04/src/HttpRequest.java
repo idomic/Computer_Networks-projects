@@ -381,8 +381,7 @@ public class HttpRequest {
 	 *  Handle response for request POST 
 	 */		
 	private void postMethod() {
-		String newFilePath = filePath(requestPage);
-		makeNewHtmlPage();	
+		String newFilePath = filePath(requestPage);	
 		fileContent = readFile(newFilePath);
 		try {
 			if (fileContent !=null) {
@@ -396,8 +395,9 @@ public class HttpRequest {
 			System.out.println("Warning - Unable to write to ouput stream in postMethod - Stream closed..");
 		}	
 		
-		Downloader downloader = new Downloader(0, parseRequestParameters(postParameters));
+		Downloader downloader = new Downloader(0, parameters);
 		downloader.run();
+		makeNewHtmlPage();
 	}
 
 	
